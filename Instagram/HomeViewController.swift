@@ -2,20 +2,142 @@
 //  HomeViewController.swift
 //  Instagram
 //
-//  Created by 藤田恵梨子 on 2020/09/27.
-//  Copyright © 2020 eriko.fujita. All rights reserved.
-//
+
 
 import UIKit
+import Firebase
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    
+    
+    @IBOutlet weak var tableView: UITableView!
+    
+    
+    // 投稿データを格納する配列
+    var postArray: [PostData] = []
+    
+    // Firebaseのリスナー
+    var listener: ListenerRegistration!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        // カスタムcellを登録する
+        let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: "Cell")
+        
     }
     
+    
+    // この中に、投稿データを読み込む処理を追加する
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("DEBUG_PRING: viewWillAppear")
+        
+        
+        if Auth.auth().currentUser != nil {   // ログインしている
+            
+            if listener == nil {
+                
+                // listener未登録なら、登録してスナップショットを受信する
+                let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true)
+                
+                listener = postsRef.addSnapshotListener() { (querySnapshot, error) in
+                    
+                    if let error = error {  // if error != nil { let error = error! }のこと？！
+                        print("DEBUG_PRINT: snapshotの取得に失敗しました。\(error)")
+                        return
+                    }
+                    
+                    // 取得したdocumentをもとにPostDataを作成し、postArrayの配列にする
+                    self.postArray = querySnapshot!.documents.map { document in
+                        print("DEBUG_PRINT: document取得\(document.documentID)")
+                        
+                        let postData = PostData(document: document)
+                        return postData
+                    }
+                    
+                    // TableViewの表示を更新
+                    self.tableView.reloadData()
+                }
+            }
+            
+        } else {    // 未ログイン（またはログアウト済）
+            
+            if listener != nil {   // listener登録済なら削除してpostArrayをクリアする
+                
+                listener.remove()
+                listener = nil
+                postArray = []
+                tableView.reloadData()
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return postArray.count
+    }
+    
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        // セルを取得してデータを設定する
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! PostTableViewCell
+        cell.setPostData(postArray[indexPath.row])  // setPostDataメソッドは、PostTableViewcell.swiftで設定
+        
+        
+        // セル内のボタン（いいねボタン）のアクションをソースコードで設定する（9.4で追記）
+        cell.likeButton.addTarget(self, action: #selector(handleButton(_: forEvent:)), for: .touchUpInside)
+        
+        return cell
+    }
+    
+    
+    // いいね、ボタンが押された時に呼ばれる
+    @objc func handleButton(_ sender: UIButton, forEvent event: UIEvent) {
+        
+        print("DEBUG_PRINT: likeボタンがタップされました。")
+        
+        // タップされたセルのインデックスを求める
+        let touch = event.allTouches?.first
+        let point = touch!.location(in: self.tableView)
+        let indexPath = tableView.indexPathForRow(at: point)
+        
+        // 配列からタップされたインデックスrのデータを取り出す
+        let postData = postArray[indexPath!.row]
+        
+        // likesを更新する
+        if let myid = Auth.auth().currentUser?.uid {
+            // 更新データを作成する
+            var updateValue: FieldValue
+            if postData.isLiked {
+                
+                // 既にいいねをしている場合は、いいね解除のためmyidを取り除く更新データを作成
+                updateValue = FieldValue.arrayRemove([myid])
+                
+            } else {
+                
+                // 今回新たにいいねを押した場合は、myidを追加する更新データを作成
+                updateValue = FieldValue.arrayUnion([myid])
+            }
+            
+            // likesに更新データを書き込む
+            let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
+            postRef.updateData(["likes": updateValue])
+        }
+    }
+ 
 
     /*
     // MARK: - Navigation
