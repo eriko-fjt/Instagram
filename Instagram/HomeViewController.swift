@@ -1,7 +1,3 @@
-//
-//  HomeViewController.swift
-//  Instagram
-//
 
 
 import UIKit
@@ -46,7 +42,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
             if listener == nil {
                 
-                // listener未登録なら、登録してスナップショットを受信する
+                // listener未登録なら、登録してスナップショットを受信する    // 各documentのDataの”date"順にソート
                 let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true)
                 
                 listener = postsRef.addSnapshotListener() { (querySnapshot, error) in
@@ -100,8 +96,16 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // セル内のボタン（いいねボタン）のアクションをソースコードで設定する（9.4で追記）
         cell.likeButton.addTarget(self, action: #selector(handleButton(_: forEvent:)), for: .touchUpInside)
         
+        // 課題
+        // セル内の、コメント入力用の吹き出しボタンのアクションを設定
+        cell.commentInputButton.addTarget(self, action: #selector(handleCommentInputButton(_:forEvent:)), for: .touchUpInside)
+        
+        // セル内の、コメント全件表示ボタンのアクションをソースコードで設定する
+        cell.displayAllCommentsButton.addTarget(self, action: #selector(handleDisplayAllCommentsButton(_: forEvent:)), for: .touchUpInside)
+        
         return cell
     }
+    
     
     
     // いいね、ボタンが押された時に呼ばれる
@@ -114,7 +118,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let point = touch!.location(in: self.tableView)
         let indexPath = tableView.indexPathForRow(at: point)
         
-        // 配列からタップされたインデックスrのデータを取り出す
+        // 配列からタップされたインデックスのデータを取り出す
         let postData = postArray[indexPath!.row]
         
         // likesを更新する
@@ -137,6 +141,71 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             postRef.updateData(["likes": updateValue])
         }
     }
+    
+    
+    // 課題
+    
+    // コメント入力ボタン押下時（コメント入力画面への遷移　＊値の受け渡しあり）
+    @objc func handleCommentInputButton(_ sender: UIButton, forEvent event: UIEvent) {
+        
+        print("DEBUG_PRINT: コメント入力ボタンがタップされました。")
+        
+        // タップされた投稿のセルのインデックスを求める
+        let touch = event.allTouches?.first
+        let point = touch!.location(in: self.tableView)
+        let indexPath = tableView.indexPathForRow(at: point)
+        // 配列からタップされたインデックスのデータを取り出す
+        let postData = postArray[indexPath!.row]
+        
+        // 配列からタップされたインデックスのデータを取り出して、commentInputViewに渡す
+        //let postData = postArray[indexPath!.row]
+        //　CommentInputViewController画面へ遷移する(documentIDを渡す）
+        let commentInputViewController = self.storyboard?.instantiateViewController(identifier: "commentInput") as! CommentInputViewController
+        
+        commentInputViewController.commentsOfPostData = postData.comments
+        commentInputViewController.postData = postData
+        commentInputViewController.postId = postData.id
+        self.present(commentInputViewController, animated: true, completion: nil)
+        
+    }
+    
+    
+    
+    // 全コメント表示ボタン押下時
+    @objc func handleDisplayAllCommentsButton(_ sender: UIButton, forEvent event: UIEvent) {
+        
+        print("DEBUG_PRINT: comment全件表示ボタンがタップされました。")
+        
+        // タップされた投稿のセルのインデックスを求める
+        let touch = event.allTouches?.first
+        let point = touch!.location(in: self.tableView)
+        let indexPath = tableView.indexPathForRow(at: point)
+        
+        // 配列からタップされたインデックスのデータを取り出す
+        let postData = postArray[indexPath!.row]
+        
+        
+        
+        // commeentViewControllerは、コメント全件表示画面
+        let commentViewController = self.storyboard?.instantiateViewController(withIdentifier: "commentList") as! CommentViewController
+        
+        // コメントの入ったpostDataは、画面遷移後に改めて取得するように仕様変更（更新データを都度取得できるようにする）したため、渡さないことにした
+        // ただし、実際のアプリでは重区なるかもしれないので、オンタイムでコメントを取得するのが良いのかどうかは、都度考えるべき。
+        
+        //commentViewController.postData = postData
+        //commentViewController.commentsOfPostData = postData.comments  // タップされたインデックスのpostData(投稿）の、comments(配列)を渡す
+        commentViewController.postId = postData.id
+        self.present(commentViewController, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
  
 
     /*
