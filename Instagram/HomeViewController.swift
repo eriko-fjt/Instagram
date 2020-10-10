@@ -35,7 +35,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     // この中に、投稿データを読み込む処理を追加する
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("DEBUG_PRING: viewWillAppear")
+        print("DEBUG_PRINT: viewWillAppear")
         
         
         if Auth.auth().currentUser != nil {   // ログインしている

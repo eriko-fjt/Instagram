@@ -12,6 +12,10 @@ import SVProgressHUD
 
 class CommentInputViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextViewDelegate {
     
+    // 投稿者のプロフィールアイコンを表示するImageView
+    @IBOutlet weak var profilePnotoImageView: UIImageView!
+    
+    
     // post投稿者の表示名を表示するラベル
     @IBOutlet weak var displayNameLabel: UILabel!
     
@@ -53,10 +57,14 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
         // 投稿者のキャプションのラベルには、枠線を入れる
         captionLabel.layer.borderWidth = 0.5
         captionLabel.layer.borderColor = UIColor.gray.cgColor
-        captionLabel.backgroundColor = UIColor(red: 0.6, green: 0.8, blue: 1.0, alpha: 0.5)
+        //captionLabel.backgroundColor = UIColor(red: 0.6, green: 0.8, blue: 1.0, alpha: 0.5)
         captionLabel.layer.cornerRadius = 5.0
         captionLabel.clipsToBounds = true
         
+        
+        // プロフィールアイコンの表示
+        let photoRef = Storage.storage().reference().child(Const.ProfilePhotoPath).child(postData.name! + ".jpg")
+        profilePnotoImageView.sd_setImage(with: photoRef)
         // 投稿者の表示名と、キャプションをセット
         self.displayNameLabel.text = "\(postData.name!)"
         self.captionLabel.text = "\(postData.caption!)"
@@ -70,7 +78,7 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
         // commentInputTextViewの枠の設定
         commentInputTextView.layer.borderColor = UIColor.gray.cgColor
         commentInputTextView.layer.borderWidth = 2.0
-        commentInputTextView.layer.cornerRadius = 20.0
+        commentInputTextView.layer.cornerRadius = 10.0
         commentInputTextView.layer.masksToBounds = true
     }
     

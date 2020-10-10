@@ -10,12 +10,14 @@ class CommentTableViewCell: UITableViewCell {
      setCommentDataは、commentDataのインスタンスが渡されてきた時に、必要なすべてのデータを部品にセットする
      */
     
+    @IBOutlet weak var displayNameLabel: UILabel!
     
     @IBOutlet weak var commentLabel: UILabel!
     
     @IBOutlet weak var commentDateLabel: UILabel!
     
-
+    @IBOutlet weak var profilePhotoImageView: UIImageView!
+    
     
     
     
@@ -28,6 +30,9 @@ class CommentTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        self.profilePhotoImageView.layer.borderColor = UIColor.gray.cgColor
+        self.profilePhotoImageView.layer.borderWidth = 0.5
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -40,8 +45,14 @@ class CommentTableViewCell: UITableViewCell {
     // CommentDataのインスタンスを引数に入れたら、表示に必要なデータを取り出し、各部品にセットする
     func setCommentData(_ commentData: CommentData) {
         
+        // プロフィールアイコンの表示
+        let photoRef = Storage.storage().reference().child(Const.ProfilePhotoPath).child(commentData.displayNameOfComment! + ".jpg")
+        profilePhotoImageView.sd_setImage(with: photoRef)
+        
+        // コメント投稿者の表示名
+        self.displayNameLabel.text = "\(commentData.displayNameOfComment!) "
         // コメント入力者の表示名と、コメント本文表示
-        self.commentLabel.text = "\(commentData.displayNameOfComment!)  \(commentData.commentContent!)"
+        self.commentLabel.text = " \(commentData.commentContent!)"
         
         // コメント日時
         // 現在時刻を取得して、コメント日時との差を表示したいが、とりあえずは、日付を表示する仕様にしておく

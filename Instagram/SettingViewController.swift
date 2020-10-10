@@ -13,13 +13,14 @@ import CLImageEditor
 import FirebaseUI
 
 class SettingViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLImageEditorDelegate {
-    
+    //hachi@techacademy.jp
     
     @IBOutlet weak var displayNameTextField: UITextField!
     
     @IBOutlet weak var profilePhotoImageView: UIImageView!
     
-    var profileImage: UIImage!
+    var profileImage = UIImage(systemName: "person.fill")
+    var defaultImage = UIImage(systemName: "person.fill")
     
     // 表示名変更ボタンをタップした時に呼ばれるメソッド
     @IBAction func handleChangeButton(_ sender: Any) {
@@ -113,7 +114,7 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
     func imageEditor(_ editor: CLImageEditor, didFinishEditingWith image: UIImage!) {
         
         SVProgressHUD.show()
-        profileImage = image!
+        //profileImage = image!
         
         if let user = Auth.auth().currentUser?.displayName {
             
@@ -123,20 +124,31 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
             let metadata = StorageMetadata()
             metadata.contentType = "image/jpeg"
             
-            //まず、既に違うファイルが上がっているかもしれないので、削除してから、アップロードする
-            photoRef.delete { error in
-                if let error = error {
-                    print("DEBUG_PRINT: プロフィール写真を更新できませんでした。  \(error)")
+            
+            //if profilePhotoImageView.image = defaultImage
+                
+                photoRef.putData(imageData!, metadata: metadata) { (metadata, error) in
+                    if error != nil {   // 投稿処理をキャンセルし、先頭画面（設定画面）に戻る
+                        print("DEBUG_PRING: プロフィール写真アップロード失敗   \(error!)")
+                        SVProgressHUD.showError(withStatus: "プロフィール写真の登録に失敗しました。")
+                        UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
+                        return
+                    }
                 }
-            }
-            photoRef.putData(imageData!, metadata: metadata) { (metadata, error) in
-                if error != nil {   // 投稿処理をキャンセルし、先頭画面（設定画面）に戻る
-                    print("DEBUG_PRING: プロフィール写真アップロード失敗   \(error!)")
-                    SVProgressHUD.showError(withStatus: "プロフィール写真の登録に失敗しました。")
-                    UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
-                    return
+              
+               /*
+              // デフォルト写真以外が入っているときは、メタデータの更新
+                photoRef.updateMetadata(metadata) { metadata, error in
+                    if let error = error {
+                        print("DEGBUG_PRINT: プロフィール写真の更新に失敗しました。　 error: \(error)")
+                        SVProgressHUD.showError(withStatus: "プロフィール写真の更新に失敗しました。")
+                        UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
+                        return
+                    }
                 }
-            }
+              */
+            
+            
             
             profilePhotoImageView.image = image
             SVProgressHUD.showSuccess(withStatus: "プロフィール写真を登録しました")
@@ -180,9 +192,10 @@ class SettingViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        profilePhotoImageView.image = profileImage
         // プロフィール写真に枠線をつける
-        self.profilePhotoImageView.layer.borderColor = UIColor.gray.cgColor
-        self.profilePhotoImageView.layer.borderWidth = 0.5
+        profilePhotoImageView.layer.borderColor = UIColor.gray.cgColor
+        profilePhotoImageView.layer.borderWidth = 0.5
         // Do any additional setup after loading the view.
     }
     
