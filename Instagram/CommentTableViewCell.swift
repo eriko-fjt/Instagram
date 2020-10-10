@@ -15,6 +15,10 @@ class CommentTableViewCell: UITableViewCell {
     
     @IBOutlet weak var commentDateLabel: UILabel!
     
+
+    
+    
+    
     //@IBOutlet weak var commentLikeButton: UIButton!  // Firestoreで更新時のアクセル方法がわからず、コメントへの「いいね！」は断念
     
     //@IBOutlet weak var commentLikeNumberLabel: UILabel!
@@ -95,9 +99,10 @@ class CommentTableViewCell: UITableViewCell {
             
         }
         
+        /*
         //ドキュメント＞コメントの辞書　へのアクセスがわからず、断念
         //コメントに対するいいね数の表示
-        /*
+        
         let commentLikeNumber = commentData.commentLikes.count
         self.commentLikeNumberLabel.text = "\(commentLikeNumber)"
         
@@ -111,6 +116,7 @@ class CommentTableViewCell: UITableViewCell {
             self.commentLikeButton.setImage(buttonImage, for: .normal)
         }
         */
+        
         
         
         

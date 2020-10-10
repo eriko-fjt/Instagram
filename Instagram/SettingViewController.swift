@@ -9,12 +9,17 @@
 import UIKit
 import Firebase
 import SVProgressHUD
+import CLImageEditor
+import FirebaseUI
 
-class SettingViewController: UIViewController {
+class SettingViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CLImageEditorDelegate {
     
     
     @IBOutlet weak var displayNameTextField: UITextField!
     
+    @IBOutlet weak var profilePhotoImageView: UIImageView!
+    
+    var profileImage: UIImage!
     
     // 表示名変更ボタンをタップした時に呼ばれるメソッド
     @IBAction func handleChangeButton(_ sender: Any) {
@@ -67,6 +72,92 @@ class SettingViewController: UIViewController {
     }
     
     
+    // --- プロフィール写真の設定ここから ---
+    
+    @IBAction func handleProfilePhotoButton(_ sender: Any) {
+        
+        // ライブラリをひ指定してピッカーを開く
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            let pickerController = UIImagePickerController()
+            pickerController.delegate = self
+            pickerController.sourceType = .photoLibrary
+            self.present(pickerController, animated: true, completion: nil)
+        }
+    }
+    
+    // 写真を選択した時に呼ばれるメソッド
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        if info[.originalImage] != nil {
+            // 選択した画像を取得
+            let image = info[.originalImage] as! UIImage
+            
+            // CLImageEditorライブラリで加工(imageを渡して、加工画面を起動）
+            let editor = CLImageEditor(image: image)!
+            editor.delegate = self
+            editor.modalPresentationStyle = .fullScreen
+            picker.present(editor, animated: true, completion: nil)
+            
+        }
+    }
+    
+    // imagePickerがキャンセルされた時に呼ばれる
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        //ImageSelectViewController画面を閉じてタブ（設定）画面に戻る
+        self.presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    // CLImageEditorで加工が終わった時に呼ばれる
+    // FireStoreのユーザ情報更新と、ImageViewへの写真の表示
+    // Auth.auth().currentUserに登録できるphotoURLは、URLでないといけないらしい（Storageのpathは不可）ので、createProfileChangeRequest()使えない。
+    func imageEditor(_ editor: CLImageEditor, didFinishEditingWith image: UIImage!) {
+        
+        SVProgressHUD.show()
+        profileImage = image!
+        
+        if let user = Auth.auth().currentUser?.displayName {
+            
+            let imageData = image.jpegData(compressionQuality: 0.5)  // 選択された写真をJPEGに変換・圧縮したデータ
+            //let photoURL = ここに、写真へのパスを作る？
+            let photoRef = Storage.storage().reference().child(Const.ProfilePhotoPath).child(user + ".jpg")
+            let metadata = StorageMetadata()
+            metadata.contentType = "image/jpeg"
+            
+            //まず、既に違うファイルが上がっているかもしれないので、削除してから、アップロードする
+            photoRef.delete { error in
+                if let error = error {
+                    print("DEBUG_PRINT: プロフィール写真を更新できませんでした。  \(error)")
+                }
+            }
+            photoRef.putData(imageData!, metadata: metadata) { (metadata, error) in
+                if error != nil {   // 投稿処理をキャンセルし、先頭画面（設定画面）に戻る
+                    print("DEBUG_PRING: プロフィール写真アップロード失敗   \(error!)")
+                    SVProgressHUD.showError(withStatus: "プロフィール写真の登録に失敗しました。")
+                    UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
+                    return
+                }
+            }
+            
+            profilePhotoImageView.image = image
+            SVProgressHUD.showSuccess(withStatus: "プロフィール写真を登録しました")
+            SVProgressHUD.dismiss()
+            
+            UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
+            
+        }
+        
+    
+    }
+    
+    // CLImageEditorで編集がキャンセルされた時に呼ばれる
+    func imageEditorDidCancel(_ editor: CLImageEditor!) {
+        // 加工画面を閉じてタブ（設定）画面に戻る
+        self.presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    // --- プロフィール写真の設定ここまで --
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -74,14 +165,24 @@ class SettingViewController: UIViewController {
         let user = Auth.auth().currentUser
         if let user = user {
             displayNameTextField.text = user.displayName
+            
+            let photoRef = Storage.storage().reference().child(Const.ProfilePhotoPath).child(user.displayName! + ".jpg")
+            profilePhotoImageView.sd_setImage(with:photoRef)
+            
         }
     }
+    
+    
+    
     
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        // プロフィール写真に枠線をつける
+        self.profilePhotoImageView.layer.borderColor = UIColor.gray.cgColor
+        self.profilePhotoImageView.layer.borderWidth = 0.5
         // Do any additional setup after loading the view.
     }
     

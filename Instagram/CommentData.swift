@@ -34,7 +34,7 @@ class CommentData: NSObject {
         self.commentContent = commentDic["commentContent"] as? String
         
         let timestamp = commentDic["commentDate"] as? Timestamp
-        self.commentDate = timestamp?.dateValue()      // これで、Date型に変換？  commentDic["commentDate"] as?
+        self.commentDate = timestamp?.dateValue()      // これで、Date型に変換？  
         
         
         /*

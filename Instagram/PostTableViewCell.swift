@@ -33,16 +33,22 @@ class PostTableViewCell: UITableViewCell {
     // コメント全件表示ボタン　「コメントxx件 すべてを表示」
     @IBOutlet weak var displayAllCommentsButton: UIButton!
     
+    // プロフィールアイコン
+    @IBOutlet weak var profileImageView: UIImageView!
     
-
+    // 投稿者の表示名
+    @IBOutlet weak var displayNameLabel: UILabel!
     
-
     
     
 
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        self.profileImageView.layer.borderColor = UIColor.gray.cgColor
+        self.profileImageView.layer.borderWidth = 0.5
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -54,6 +60,14 @@ class PostTableViewCell: UITableViewCell {
     
     // PostDataの内容をセルに表示
     func setPostData(_ postData: PostData) {
+        
+        //表示名
+        self.displayNameLabel.text = "\(postData.name!)"
+        // プロフィールアイコンの表示
+        let photoRef = Storage.storage().reference().child(Const.ProfilePhotoPath).child(postData.name! + ".jpg")
+        profileImageView.sd_setImage(with: photoRef)
+        
+        
         
         // 画像の表示
         postImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
@@ -107,7 +121,6 @@ class PostTableViewCell: UITableViewCell {
         } else {
             self.secondCommentLabel.text = ""
         }
-        
         
         
         // コメント全件表示ボタンに、「コメントxx件すべて表示」というタイトルを設定

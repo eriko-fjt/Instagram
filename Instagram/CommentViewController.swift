@@ -47,8 +47,7 @@ class CommentViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // ログインの有無の確認・リスナー登録/削除はHomeViewで行っているので、ここではしなくていいとの認識。
-        
+    
         // 該当する投稿のコメントが追加されるたびに検知してくれる（はず）。リスナーの削除は、画面遷移時
         // 当初は、postDataごとHomeViewから渡してもらっていたが、リスナーを設置し、画面遷移後に投稿された新しいデータを反映するため、書き換えた。
         if commentListener == nil {
@@ -78,7 +77,7 @@ class CommentViewController: UIViewController, UITableViewDataSource, UITableVie
             }
         }
         
-        /*
+        /* リスナー設置する前に記述してたコード
         //commentsOfPostDataから、一つずつ、コメント１件のデータcommentDic(辞書)を取り出して、
         //コメント配列から一件ずつcommentDicを取り出してインスタンスを生成し、そのインスタンスをcommentArray配列に入れていく
         commentArray = commentsOfPostData.map { commentDic in
@@ -143,14 +142,24 @@ class CommentViewController: UIViewController, UITableViewDataSource, UITableVie
     // Home画面から来る場合と、コメントインプットビューから来る場合があるので、dismissではダメ。先頭画面に戻るようにする
     @IBAction func handleBackButton(_ sender: Any) {
         
-        // 画面遷移前に、リスナーを削除しておく　completionの中に入れるべき？
-        if commentListener != nil {
-            commentListener.remove()
-            commentListener = nil
-            commentArray = []
-        }
         UIApplication.shared.windows.first{ $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil )
     }
+    
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // 画面遷移前に、リスナーを削除しておく　completionの中に入れるべき？
+        if self.commentListener != nil {
+            self.commentListener.remove()
+            self.commentListener = nil
+            self.commentArray = []
+        }
+        
+    }
+    
+    
     
     
     

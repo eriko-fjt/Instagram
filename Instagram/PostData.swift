@@ -6,7 +6,7 @@ class PostData: NSObject {
     
     /*
      Firestoreに保存してあるデータで、PostPathに保存してあり、swiftで使いたいデータは、
-     ここで取得して、swiftで使えるように変換しておく。
+     ここで取得して、このクラスのイニシャライザにセットして、インスタンス生成時にswiftで使えるように変換しておく。
      （PostData型（PostDataクラス）として他のクラスで使えるように）
      
      */

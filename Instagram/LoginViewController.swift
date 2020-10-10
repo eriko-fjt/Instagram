@@ -105,7 +105,7 @@ class LoginViewController: UIViewController {
     }
     
     
-    
+    // nana@techacademy.jp
     
     
 

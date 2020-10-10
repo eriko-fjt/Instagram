@@ -162,7 +162,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //　CommentInputViewController画面へ遷移する(documentIDを渡す）
         let commentInputViewController = self.storyboard?.instantiateViewController(identifier: "commentInput") as! CommentInputViewController
         
-        commentInputViewController.commentsOfPostData = postData.comments
+        //commentInputViewController.commentsOfPostData = postData.comments //遷移後に新たに取得するので、受け渡しはしない。
         commentInputViewController.postData = postData
         commentInputViewController.postId = postData.id
         self.present(commentInputViewController, animated: true, completion: nil)

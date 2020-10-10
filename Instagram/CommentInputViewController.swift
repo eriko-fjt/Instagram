@@ -27,11 +27,9 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
     // この↓、コメントデータの辞書が詰まったcommentsOfPostData配列の中身は、HomeViewControllerから渡してもらったもので、
     // タップしたセルの投稿のコメント配列が代入されている commentsOfPostData = postData.comments
     // commentsOfPostData の中身は、[commentDic1, commentDic2, commentDic3, ...]になっている。commentDicに、コメント１件分のデータが詰まっている。
-    var commentsOfPostData: [[String: Any]]!
-    var postData: PostData!   // リスナー登録により、postDataだけでは、更新データ入らず、古い。idだけ貰えば良くなりそう。
+    //var commentsOfPostData: [[String: Any]]!
+    var postData: PostData!   // キャプションに使う。リスナー登録により、受け渡されたpostDataでは更新データが入らず古いのでコメントには使用せず。
     var postId: String!
-    
-    
     
     // HomeViewControllerから渡された投稿の、コメントのインスタンスを入れる配列 viewWillAppearの中でインスタンスを生成し、この配列に入れる
     var commentArray: [CommentData] = []
@@ -39,9 +37,10 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
     // コメントにリスナーを設定してみる おそらく、これでコメント画面遷移後に、誰かがコメント投稿しても反映される。
     var commentListener: ListenerRegistration!
     
-    // コメント投稿ボタンを押して、コメント全件表示画面に遷移した際に渡すための値　　不要？
-    var commentsOfPostDataForCommentView: [[String: Any]]!
-    var postDataForCommentView: PostData!
+    
+    // キーボード表示時のTextView浮き上がり動作用の監視
+    var isObserving = false
+    
     
     
     override func viewDidLoad() {
@@ -84,6 +83,18 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
         // 入力用のTextViewにカーソルが入っているように設定
         self.commentInputTextView.becomeFirstResponder()
         
+        // Viewmの表示時にキーボードの表示・非表示を監視するObserverを登録する
+        /*
+        if !isObserving {
+            let notification = NotificationCenter.default
+            notification.addObserver(self, selector: #selector(keyboardWillShow(notification)), name: UIResponder.keyboardWillShowNotification, object: nil)
+            notification.addObserver(self, selector: Selector(("keyboardWillHide:")), name: UIResponder.keyboardWillHideNotification, object: nil)
+            isObserving = true
+            
+        }
+        */
+        
+        
         
         // 該当する投稿のコメントが追加されるたびに検知してくれる（はず）。リスナーの削除は、画面遷移時
         // 当初は、postDataごとHomeViewから渡してもらっていたが、リスナーを設置し、画面遷移後に投稿された新しいデータを反映するため、書き換えた。
@@ -102,8 +113,8 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
                 
                 if let postDic = postData {
                     if let comments = postDic["comments"] as? [[String: Any]] {
-                        self.commentsOfPostData = comments
-                        self.commentArray = self.commentsOfPostData.map { commentDic in
+                        let commentsOfPostData = comments
+                        self.commentArray = commentsOfPostData.map { commentDic in
                             let commentData = CommentData(commentDic: commentDic)
                             
                             return commentData
@@ -188,7 +199,7 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
         commentInputTextView.text = ""
     }
     
-    /*
+    /* Firestoreのdocumentの中身が、辞書＞辞書＞辞書＞配列…であれば更新用のPathを作れたが、辞書＞配列＞辞書＞配列だとやり方がわからなかったので断念
     // コメントの「いいね！」❤︎ボタンが押された時に呼ばれるメソッド
     @objc func handleCommentLikeButton(_ sender: UIButton, forEvent event: UIEvent) {
         
@@ -219,12 +230,32 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
         
     }
     */
-
     
-    // < ボタンを押した時
+    /*
+    // キーボード
+    @objc func keyboardWillShow(notfication: NSNotification?) {
+        let rect = (notification?.userInfo?[UIKeyboardFrameEndUserInfoKey] as! NSValue).CGRectValue()
+        let duration: TimeInterval = notification?.userInfo?.[UIKeyboardAnimationDurationUserInfoKey] as! Double
+     UIView.animateWithDuration(duration, animations: {
+             let transform = CGAffineTransFormMakeTranslation(0, -rect.size.height)
+             self.view.transform = transform
+         }, completion: nil)
+    }
+     
+     
+     @objc func keyboardWillHide(notification: NSNotification?) {
+         let duration = (notification?.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as Double)
+         UIView.anmateWithDuration(duration, animations: {
+             self.view.tranform = CGAffineTransformIdentity
+         },
+         completion: nil)
+     }
+    */
+    
+    // < 戻るボタンを押した時
     @IBAction func handleBackButton(_ sender: Any) {
         
-        // 画面遷移前に、リスナーを削除しておく　completionの中に入れるべき？
+        
         if commentListener != nil {
             commentListener.remove()
             commentListener = nil
@@ -234,7 +265,25 @@ class CommentInputViewController: UIViewController, UITableViewDataSource, UITab
         self.dismiss(animated: true, completion: nil)
     }
     
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // 画面遷移前に、リスナーを削除しておく　
+        if self.commentListener != nil {
+            self.commentListener.remove()
+            self.commentListener = nil
+        }
+        self.commentArray = []
+        
+        /*
+        // キーボードの監視を解除
+        if isObserving {
+            let notification = NotificationCenter.default
+            notification.removeObserver(self)
+            notification.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        }
+        */
+    }
     
     
     

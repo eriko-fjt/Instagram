@@ -55,7 +55,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s3j-Xd-CoR">
-                                <rect key="frame" x="-93" y="168" width="600" height="80"/>
+                                <rect key="frame" x="57" y="168" width="300" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="lUo-1Q-thL"/>
                                 </constraints>
@@ -65,7 +65,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ovu-Wp-8Kh">
-                                <rect key="frame" x="-93" y="258" width="600" height="80"/>
+                                <rect key="frame" x="57" y="218" width="300" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="1pJ-HV-Ckh"/>
                                 </constraints>
@@ -74,14 +74,38 @@
                                     <action selector="handleLogoutButton:" destination="Dq6-Fz-nbj" eventType="touchUpInside" id="TcR-wK-Gji"/>
                                 </connections>
                             </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="KQs-cH-Z9n">
+                                <rect key="frame" x="147" y="309.5" width="120" height="117"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="F53-5D-e6I"/>
+                                    <constraint firstAttribute="width" constant="120" id="sAx-5v-SSu"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pS1-PU-pCJ">
+                                <rect key="frame" x="57" y="448" width="300" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="Wbo-6i-8jJ"/>
+                                </constraints>
+                                <state key="normal" title="プロフィール写真を設定" backgroundImage="btn"/>
+                                <connections>
+                                    <action selector="handleProfilePhotoButton:" destination="Dq6-Fz-nbj" eventType="touchUpInside" id="ln4-aw-Hxc"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="tjb-Pf-P8h" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="7YP-XL-bMy"/>
                             <constraint firstItem="s3j-Xd-CoR" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="8b1-iY-NWb"/>
+                            <constraint firstItem="s3j-Xd-CoR" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="LdZ-Jz-XV0"/>
                             <constraint firstItem="Ovu-Wp-8Kh" firstAttribute="top" secondItem="s3j-Xd-CoR" secondAttribute="bottom" constant="10" id="N4F-mU-DVl"/>
+                            <constraint firstItem="KQs-cH-Z9n" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="WkE-d4-3oC"/>
+                            <constraint firstItem="pS1-PU-pCJ" firstAttribute="top" secondItem="KQs-cH-Z9n" secondAttribute="bottom" constant="20" id="Xq7-Kb-ub3"/>
                             <constraint firstItem="s3j-Xd-CoR" firstAttribute="top" secondItem="tjb-Pf-P8h" secondAttribute="bottom" constant="10" id="Ytp-CF-WcP"/>
                             <constraint firstItem="tjb-Pf-P8h" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="ZBc-9K-yBO"/>
+                            <constraint firstItem="pS1-PU-pCJ" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="byw-WZ-WHt"/>
                             <constraint firstItem="Ovu-Wp-8Kh" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="cym-oH-rhW"/>
+                            <constraint firstItem="Ovu-Wp-8Kh" firstAttribute="centerX" secondItem="qSZ-gh-rdY" secondAttribute="centerX" id="mR5-Il-9bo"/>
+                            <constraint firstItem="KQs-cH-Z9n" firstAttribute="top" secondItem="Ovu-Wp-8Kh" secondAttribute="bottom" constant="50" id="wEd-rv-j64"/>
                             <constraint firstItem="tjb-Pf-P8h" firstAttribute="top" secondItem="pYP-13-RSd" secondAttribute="top" constant="80" id="yYt-1G-wmP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="pYP-13-RSd"/>
@@ -89,11 +113,12 @@
                     <tabBarItem key="tabBarItem" title="設定" image="setting" id="FJq-pk-RjM"/>
                     <connections>
                         <outlet property="displayNameTextField" destination="tjb-Pf-P8h" id="yxs-iV-tKu"/>
+                        <outlet property="profilePhotoImageView" destination="KQs-cH-Z9n" id="SBg-xm-sbI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZAQ-JX-VEu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1041" y="866"/>
+            <point key="canvasLocation" x="1040.5797101449275" y="865.84821428571422"/>
         </scene>
         <!--Comment Input View Controller-->
         <scene sceneID="ZhF-29-dJW">
@@ -246,7 +271,7 @@
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aX5-iZ-yHR">
-                                <rect key="frame" x="-93" y="204" width="600" height="80"/>
+                                <rect key="frame" x="57" y="204" width="300" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="BvG-a8-DVn"/>
                                 </constraints>
@@ -256,7 +281,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N6m-RS-ohP">
-                                <rect key="frame" x="-93" y="294" width="600" height="80"/>
+                                <rect key="frame" x="57" y="254" width="300" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="7PO-8R-qPt"/>
                                 </constraints>
@@ -383,14 +408,14 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Twd-Fq-Lra">
-                                <rect key="frame" x="-93" y="256" width="600" height="80"/>
+                                <rect key="frame" x="57" y="256" width="300" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="8O9-0P-e0z"/>
                                 </constraints>
                                 <state key="normal" title="ログイン" backgroundImage="btn"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ygH-fZ-9oB">
-                                <rect key="frame" x="-93" y="346" width="600" height="80"/>
+                                <rect key="frame" x="57" y="306" width="300" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="eUP-HJ-n4W"/>
                                 </constraints>
@@ -452,6 +477,7 @@
         <image name="camera" width="25" height="25"/>
         <image name="chevron.left" catalog="system" width="48" height="64"/>
         <image name="home" width="25" height="25"/>
+        <image name="person.fill" catalog="system" width="64" height="60"/>
         <image name="setting" width="25" height="25"/>
     </resources>
 </document>
