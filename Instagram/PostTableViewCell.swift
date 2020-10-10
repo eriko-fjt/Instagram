@@ -68,7 +68,6 @@ class PostTableViewCell: UITableViewCell {
         profileImageView.sd_setImage(with: photoRef)
         
         
-        
         // 画像の表示
         postImageView.sd_imageIndicator = SDWebImageActivityIndicator.gray
         
@@ -125,8 +124,18 @@ class PostTableViewCell: UITableViewCell {
         
         // コメント全件表示ボタンに、「コメントxx件すべて表示」というタイトルを設定
         let totalComments = postData.comments.count   // この投稿に対するコメント件数を取得
-        //displayAllCommentsButton.backgroundColor = UIColor.gray
-        displayAllCommentsButton.setTitle("コメント\(totalComments)件 すべて表示", for: UIControl.State.normal)
+        
+        
+        if totalComments == 0 { // コメントがない場合は、非表示。２件までは投稿の下に表示するので、　< 3　でもいいかもしれないが。
+            
+            displayAllCommentsButton.isHidden = true
+            
+        } else {
+            
+            displayAllCommentsButton.isHidden = false
+            displayAllCommentsButton.setTitle("コメント\(totalComments)件 すべて表示", for: UIControl.State.normal)
+        }
+        
         
     }
     
