@@ -14,4 +14,5 @@ target 'Instagram' do
   pod 'FirebaseUI/Storage'
   pod 'SVProgressHUD', '2.2.5'
   pod 'CLImageEditor/AllTools', '0.2.4'
+  pod 'IQKeyboardManagerSwift'
 end
