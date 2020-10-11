@@ -19,9 +19,8 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var displayNameTextField: UITextField!
     
     
-    // ログインボタンをタップした時に呼ばれるメソッド
+    
     @IBAction func handleLoginButton(_ sender: Any) {
-        
         if let address = mailAddressTextField.text, let password = passwordTextField.text {
 
             // アドレスとパスワード名のいずれかが入力されていない時は何もしない
@@ -48,7 +47,11 @@ class LoginViewController: UIViewController {
                 self.dismiss(animated: true, completion: nil)
             }
         }
+        
+        
     }
+    
+    
     
     
     // アカウント作成ボタンをタップした時に呼ばれるメソッド

@@ -428,6 +428,9 @@
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="8O9-0P-e0z"/>
                                 </constraints>
                                 <state key="normal" title="ログイン" backgroundImage="btn"/>
+                                <connections>
+                                    <action selector="handleLoginButton:" destination="GNE-x8-5bA" eventType="touchUpInside" id="6eF-DF-duk"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ygH-fZ-9oB">
                                 <rect key="frame" x="57" y="306" width="300" height="40"/>
@@ -437,7 +440,6 @@
                                 <state key="normal" title="アカウント作成" backgroundImage="btn"/>
                                 <connections>
                                     <action selector="handleCreateAccountButton:" destination="GNE-x8-5bA" eventType="touchUpInside" id="Imm-At-5hk"/>
-                                    <action selector="handleLoginButton:" destination="GNE-x8-5bA" eventType="touchUpInside" id="w7I-ZX-nRp"/>
                                 </connections>
                             </button>
                         </subviews>
